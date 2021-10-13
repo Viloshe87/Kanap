@@ -11,12 +11,6 @@ fetch('http://localhost:3000/api/products')
     console.log(products);
     
 
-//Récuperation du tableau 
-for (let i in products){
-  let elt = document.getElementById('items');
-  elt.innerHTML +=kk;
-
-}
 
   })
 
