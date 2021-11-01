@@ -1,10 +1,59 @@
-const urlParams = new URLSearchParams(window.location.search);
-const myParam = urlParams.get('id'); 
+//récupérer les paramètres d’URL//
 
-fetch('http://localhost:3000/api/products')
-.then((response) => response.json())
-    .then(response => {
-        console.log(id)
-        })
+var str = window.location.href;
+var url = new URL(str);
+var idProduct = url.searchParams.get("id");
+console.log(idProduct);
+let article = "";
 
-.catch((erreur) => console.log("erreur : " + erreur));
+// Récupération des articles de l'API//
+    fetch("http://localhost:3000/api/products/" + idProduct)
+    .then((res) => {
+        return res.json();
+    })
+
+       // Répartition des données de l'API dans le DOM
+       .then(function (resultatAPI) {
+        article = resultatAPI;
+        console.log(article);
+        if (article){
+            recupArticle(article);
+        }
+    })
+    .catch((error) => {
+        console.log("Erreur de la requête API");
+    })
+
+    getArticle();
+    function recupArticle(article){
+        // Insertion de l'image
+        let productImg = document.createElement("img");
+        document.querySelector(".item__img").appendChild(productImg);
+        productImg.src = article.imageUrl;
+        productImg.alt = article.altTxt;
+    
+        // Modification du titre "h1"
+        let productName = document.getElementById('title');
+        productName.innerHTML = article.name;
+    
+        // Modification du prix
+        let productPrice = document.getElementById('price');
+        productPrice.innerHTML = article.price;
+    
+        // Modification de la description
+        let productDescription = document.getElementById('description');
+        productDescription.innerHTML = article.description;
+    
+        // Insertion des options de couleurs
+        for (let colors of article.colors){
+            console.table(colors);
+            let productColors = document.createElement("option");
+            document.querySelector("#colors").appendChild(productColors);
+            productColors.value = colors;
+            productColors.innerHTML = colors;
+        }
+        addToCart(article);
+    
+    }
+
+    let produitLocalStorage = JSON.parse(localStorage.getItem("produit"));
