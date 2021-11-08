@@ -8,6 +8,7 @@ console.log(id);
 
 
 
+
 // Récupération des articles de l'API//
 fetch("http://localhost:3000/api/products/" + id)
     .then((res) => {
@@ -63,13 +64,14 @@ function listenForCartAdd() {
     document.getElementById('addToCart').addEventListener('click', () => {
         let qty = document.getElementById('quantity').value;
         let color = document.getElementById("colors").value;
+
         if (qty < 1) {
             alert("la quantité doit etre supérieur a 1.");
             return;
         }
 
         if (color.length == 0) {
-            alert("vous devez selectionner une couleur");
+            alert("Vous devez selectionner une couleur");
             return;
         }
 
@@ -77,12 +79,20 @@ function listenForCartAdd() {
         let products = [];
 
         if (localStorage.getItem('products')) {
-            produitLocalStorage = JSON.parse(localStorage.getItem("produit"));
-            console.log('il y a déja quelque chose dans le local storage', products)
+            products = JSON.parse(localStorage.getItem("products"));
+            let productAlreadyExist = products.find(product => product.id == id && product.color == color);
+
+            if (productAlreadyExist) {
+                productAlreadyExist.qty = Number(productAlreadyExist.qty) + Number(qty);
+            } else {
+                products.push(product)
+            }
+        }
+        else {
+            products.push(product)
         }
 
-        console.log('il passe la validation', products);
 
-        products.push(product)
+
     })
 }
