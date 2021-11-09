@@ -1,28 +1,12 @@
-//récupérer les paramètres d’URL//
-
-var str = window.location.href;
-var url = new URL(str);
-var id = url.searchParams.get("id");
-console.log(id);
-
-
-
+let id = getId();
 
 
 // Récupération des articles de l'API//
 fetch("http://localhost:3000/api/products/" + id)
-    .then((res) => {
-        return res.json();
-    })
-
-    // Répartition des données de l'API dans le DOM
-    .then(function (resultatAPI) {
-        article = resultatAPI;
-        console.log(article);
-        if (article) {
-            display(article);
-            listenForCartAdd();
-        }
+    .then((res) => res.json())
+    .then(function (article) {
+        display(article);
+        listenForCartAdd();
     })
     .catch((error) => {
         console.log("Erreur de la requête API");
@@ -58,6 +42,12 @@ function display(article) {
         productColors.innerHTML = colors;
     }
 }
+//récupérer les paramètres d’URL//
+function getId() {
+    let str = window.location.href;
+    let url = new URL(str);
+    return url.searchParams.get("id");
+}
 
 //Ajout du produit dans le local storage
 function listenForCartAdd() {
@@ -84,6 +74,7 @@ function listenForCartAdd() {
 
             if (productAlreadyExist) {
                 productAlreadyExist.qty = Number(productAlreadyExist.qty) + Number(qty);
+                product = productAlreadyExist;
             } else {
                 products.push(product)
             }
@@ -92,7 +83,10 @@ function listenForCartAdd() {
             products.push(product)
         }
 
-
+        localStorage.setItem('products', JSON.stringify(products));
+        alert('Votre commmande est dans le panier')
+        window.location.href = 'index.html'
 
     })
 }
+
