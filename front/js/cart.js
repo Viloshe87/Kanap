@@ -7,8 +7,31 @@ if (isCartempty()) {
         .then((response) => response.json())
         .then((allProducts) => {
             let products = buildCompletProductsList(allProducts);
+
+            let total = countTotal(products);
+            let quantity = countQuantity(products);
+            displayTotal(total)
+            displayQuantity(quantity)
         })
         .catch((erreur) => console.log("erreur :" + erreur));
+}
+
+function countTotal(products) {
+
+    let total = 0;
+    products.forEach(product => {
+        total = total + (Number(product.price) * Number(product.qty))
+    })
+    return total;
+}
+
+function countQuantity(products) {
+    let quantity = 0;
+
+    products.forEach(product => {
+        quantity = quantity + Number(product.qty);
+    })
+    return quantity;
 }
 
 function buildCompletProductsList(allProducts) {
@@ -39,4 +62,14 @@ function isCartempty() {
 function showemptyCart() {
     document.querySelector('h1').innerText = 'Panier vide'
     document.querySelector('.cart').getElementsByClassName.display = 'none'
+}
+
+function displayTotal(total) {
+
+    document.getElementById('totalPrice').innerHTML = total
+}
+
+function displayQuantity(quantity) {
+
+    document.getElementById('totalQuantity').innerHTML = quantity
 }
