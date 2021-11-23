@@ -15,7 +15,7 @@ if (isCartempty()) {
         })
         .catch((erreur) => console.log("erreur :" + erreur));
 }
-
+//Récupération des infos de la page produit
 function countTotal(products) {
 
     let total = 0;
@@ -63,12 +63,12 @@ function showemptyCart() {
     document.querySelector('h1').innerText = 'Panier vide'
     document.querySelector('.cart').getElementsByClassName.display = 'none'
 }
-
+//Affichage du prix total du produit
 function displayTotal(total) {
 
     document.getElementById('totalPrice').innerHTML = total
 }
-
+//Affichafe de la quantité du produit
 function displayQuantity(quantity) {
 
     document.getElementById('totalQuantity').innerHTML = quantity
