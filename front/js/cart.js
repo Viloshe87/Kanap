@@ -11,9 +11,39 @@ if (isCartempty()) {
             let total = countTotal(products);
             let quantity = countQuantity(products);
             displayTotal(total)
-            displayQuantity(quantity)
+            displayQuantity(quantity);
+            displayProducts(products);
+            listenForDeletion();
+
         })
         .catch((erreur) => console.log("erreur :" + erreur));
+}
+
+function listenForDeletion() {
+    document.querySelectorAll('deleteItem').forEach(button => {
+
+        button.addEventListener('click', (e) => {
+            let target = e.target;
+            let id = target.getAttribute('data.id');
+            let color = target.getAttribute('data.color');
+
+            let productsInInCart = JSON.parse(localStorage.getItem("products"));
+            let index = productsInInCart.findIndex(product => product.id === id && product.color == color);
+            productsInInCart.splice(index, 1);
+
+            localStorage.setItem('products', JSON.stringnify(productsInInCart))
+            location.reload();
+        })
+    })
+}
+
+function displayProducts(products) {
+    let html = '';
+
+    products.forEach(product => {
+        html += render(product);
+    })
+    document.getElementById('cart__items').innerHTML = html
 }
 //Récupération des infos de la page produit
 function countTotal(products) {
@@ -34,13 +64,37 @@ function countQuantity(products) {
     return quantity;
 }
 
+function render(product) {
+    return `<article class="cart__item" data-id="${product._id}">
+    <div class="cart__item__img">
+      <img src="${product.imageUrl}" alt="Photographie d'un canapé">
+    </div>
+    <div class="cart__item__content">
+      <div class="cart__item__content__titlePrice">
+        <h2>'${product.name}' - '${product.color}'</h2>
+        <p>"${Formatter.format(product.price)}"</p>
+      </div>
+      <div class="cart__item__content__settings">
+        <div class="cart__item__content__settings__quantity">
+          <p>Qté : </p>
+          <input type="number" class="itemQuantity" name="itemQuantity" min="1" max="100" value="${product.qty}">
+        </div>
+        <div class="cart__item__content__settings__delete">
+          <p class="deleteItem" data.id="${product.__id}" data.color="${product.color}" >Supprimer</p>
+        </div>
+      </div>
+    </div>
+  </article>`;
+}
+
 function buildCompletProductsList(allProducts) {
 
     let products = [];
     let productsInInCart = JSON.parse(localStorage.getItem("products"));
 
     productsInInCart.forEach(cartItem => {
-        let product = allProducts.find(item => item._id == cartItem.id)
+        let item = allProducts.find(item => item._id == cartItem.id)
+        let product = { ...item }
         product.qty = cartItem.qty
         product.color = cartItem.color
         console.log(product)
@@ -66,7 +120,7 @@ function showemptyCart() {
 //Affichage du prix total du produit
 function displayTotal(total) {
 
-    document.getElementById('totalPrice').innerHTML = total
+    document.getElementById('totalPrice').innerHTML = formatter.format(total)
 }
 //Affichafe de la quantité du produit
 function displayQuantity(quantity) {
