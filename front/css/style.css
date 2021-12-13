@@ -23,6 +23,10 @@ h2 {
 	height: 100px;
 }
 
+.error{
+	border: 3px solid red;
+}
+
 /*maxwidth + centering*/
 .limitedWidthBlockContainer {
 	display: flex;
