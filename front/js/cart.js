@@ -15,9 +15,6 @@ if (isCartempty()) {
             displayProducts(products);
             listenForDeletion();
             listenForQtyChange();
-            windows.setTimeout(() => {
-                listenForQtyChange();
-            }, 500)
         })
 }
 
@@ -38,7 +35,7 @@ function listenForQtyChange() {
             console.log(id, color, qty);
 
             let productsInCart = JSON.parse(localStorage.getItem("products"));
-            let index = productsInCart.findIndex(product.id === id && product.color == color);
+            let index = productsInCart.findIndex(product => product.id === id && product.color == color);
             productsInCart[index].qty = qty;
             localStorage.setItem('products', JSON.stringify(productsInCart))
             location.reload();
@@ -119,9 +116,9 @@ function render(product) {
 function buildCompletProductsList(allProducts) {
 
     let products = [];
-    let productsInInCart = JSON.parse(localStorage.getItem("products"));
+    let productsInCart = JSON.parse(localStorage.getItem("products"));
 
-    productsInInCart.forEach(cartItem => {
+    productsInCart.forEach(cartItem => {
         let item = allProducts.find(item => item._id == cartItem.id)
         let product = { ...item }
         product.qty = cartItem.qty

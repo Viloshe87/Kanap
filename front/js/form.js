@@ -9,27 +9,27 @@ let charRegExp = new RegExp("^[a-zA-Z ,.'-]+$");
 let addressRegExp = new RegExp("^[0-9]{1,3}(?:(?:[,. ]){1}[-a-zA-Zàâäéèêëïîôöùûüç]+)+");
 
 // Ecoute de la modification du prénom
-form.firstName.addEventListener('change', function () {
+form.firstName.addEventListener('input', function () {
     validFirstName(this);
 });
 
 // Ecoute de la modification du prénom
-form.lastName.addEventListener('change', function () {
+form.lastName.addEventListener('input', function () {
     validLastName(this);
 });
 
 // Ecoute de la modification du prénom
-form.address.addEventListener('change', function () {
+form.address.addEventListener('input', function () {
     validAddress(this);
 });
 
 // Ecoute de la modification du prénom
-form.city.addEventListener('change', function () {
+form.city.addEventListener('input', function () {
     validCity(this);
 });
 
 // Ecoute de la modification du prénom
-form.email.addEventListener('change', function () {
+form.email.addEventListener('input', function () {
     validEmail(this);
 });
 
@@ -102,12 +102,13 @@ function hideError(element) {
 
 
 //Envoi des informations client au localstorage
-function postForm(){
+function postForm() {
     const btn_commander = document.getElementById("order");
 
     //Ecouter le panier
-    btn_commander.addEventListener("click", (event)=>{
-    
+    btn_commander.addEventListener("click", (event) => {
+        //Arret d'execution du formulaire//
+        event.preventDefault();
         //Récupération des coordonnées du formulaire client
         let inputName = document.getElementById('firstName');
         let inputLastName = document.getElementById('lastName');
@@ -116,14 +117,16 @@ function postForm(){
         let inputMail = document.getElementById('email');
 
         //Construction d'un array depuis le local storage
+
         let idProducts = [];
-        for (let i = 0; i<produitLocalStorage.length;i++) {
+      
+        for (let i = 0; i < produitLocalStorage.length; i++) {
             idProducts.push(produitLocalStorage[i].idProduit);
         }
         console.log(idProducts);
 
         const order = {
-            contact : {
+            contact: {
                 firstName: inputName.value,
                 lastName: inputLastName.value,
                 address: inputAdress.value,
@@ -131,29 +134,29 @@ function postForm(){
                 email: inputMail.value,
             },
             products: idProducts,
-        } 
+        }
 
         const options = {
             method: 'POST',
             body: JSON.stringify(order),
             headers: {
-                'Accept': 'application/json', 
-                "Content-Type": "application/json" 
+                'Accept': 'application/json',
+                "Content-Type": "application/json"
             },
         };
 
         fetch("http://localhost:3000/api/products/order", options)
-        .then((response) => response.json())
-        .then((data) => {
-            console.log(data);
-            localStorage.clear();
-            localStorage.setItem("orderId", data.orderId);
+            .then((response) => response.json())
+            .then((data) => {
+                console.log(data);
+                localStorage.clear();
+                localStorage.setItem("orderId", data.orderId);
 
-            document.location.href = "confirmation.html";
-        })
-        .catch((err) => {
-            alert ("Problème avec fetch : " + err.message);
-        });
-        })
+                document.location.href = "confirmation.html";
+            })
+            .catch((err) => {
+                alert("Problème avec fetch : " + err.message);
+            });
+    })
 }
 postForm();
