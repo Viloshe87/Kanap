@@ -9,6 +9,8 @@ fetch("http://localhost:3000/api/products/" + id)
         listenForCartAdd();
     })
     .catch((error) => {
+        alert('Produit inexistant')
+        document.querySelector('main').innerHTML = 'Produit inexistant'
         console.log("Erreur de la requête API");
     })
 
@@ -49,7 +51,7 @@ function getId() {
     return url.searchParams.get("id");
 }
 
-//Ajout du produit dans le local storage
+//Ajout du produit dans le local storage//
 function listenForCartAdd() {
     document.getElementById('addToCart').addEventListener('click', () => {
         let qty = document.getElementById('quantity').value;

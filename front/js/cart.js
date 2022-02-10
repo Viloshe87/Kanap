@@ -3,11 +3,12 @@ if (isCartempty()) {
     showemptyCart();
 } else {
 
+    //récupérations des données de l' API //
+
     fetch("http://localhost:3000/api/products/")
         .then((response) => response.json())
         .then((allProducts) => {
             let products = buildCompletProductsList(allProducts);
-
             let total = countTotal(products);
             let quantity = countQuantity(products);
             displayTotal(total)
@@ -18,6 +19,7 @@ if (isCartempty()) {
         })
 }
 
+//Vérification su panier supérieur a zéro //
 
 function listenForQtyChange() {
     document.querySelectorAll('.itemQuantity').forEach(button => {
@@ -43,6 +45,8 @@ function listenForQtyChange() {
     })
 }
 
+//Supression du produit dans le panier//
+
 function listenForDeletion() {
     document.querySelectorAll('.deleteItem').forEach(button => {
 
@@ -60,6 +64,7 @@ function listenForDeletion() {
         })
     })
 }
+//Affichage du produit dans le panier //
 
 function displayProducts(products) {
     let html = '';
@@ -70,8 +75,10 @@ function displayProducts(products) {
     document.getElementById('cart__items').innerHTML = html
 }
 
+//Récupération des infos de la page produit//
 
-//Récupération des infos de la page produit
+//Récupération du prix total // 
+
 function countTotal(products) {
 
     let total = 0;
@@ -81,6 +88,8 @@ function countTotal(products) {
     return total;
 }
 
+// Récupération de la quantité //
+
 function countQuantity(products) {
     let quantity = 0;
 
@@ -89,6 +98,7 @@ function countQuantity(products) {
     })
     return quantity;
 }
+// Récupération des identifiants du DOM //
 
 function render(product) {
     return `<article class="cart__item" data-id="${product._id}">
@@ -113,6 +123,8 @@ function render(product) {
   </article>`;
 }
 
+// Récupération des produits dans le locaStorage //
+
 function buildCompletProductsList(allProducts) {
 
     let products = [];
@@ -128,7 +140,7 @@ function buildCompletProductsList(allProducts) {
     })
     return products;
 }
-
+//Si carte vide //
 function isCartempty() {
     if (!localStorage.getItem('products')) {
         return true;
@@ -148,7 +160,8 @@ function displayTotal(total) {
 
     document.getElementById('totalPrice').innerHTML = formatter.format(total)
 }
-//Affichafe de la quantité du produit
+//Affichage de la quantité du produit
+
 function displayQuantity(quantity) {
 
     document.getElementById('totalQuantity').innerHTML = quantity

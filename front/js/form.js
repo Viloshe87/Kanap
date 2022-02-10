@@ -91,10 +91,12 @@ const validEmail = function (inputEmail) {
     showError(el, 'Veuillez renseigner ce champ');
     return false;
 };
-
+ 
 function showError(element, message) {
     element.innerHTML = message;
 }
+
+//Masque l'erreur du formulaire pour afficher texte utilisateur //
 
 function hideError(element) {
     element.innerHTML = '';
@@ -117,15 +119,9 @@ function postForm() {
         let inputMail = document.getElementById('email');
 
         //Construction d'un array depuis le local storage
+        let productsIds = JSON.parse(localStorage.getItem("products")).map(product => product.id);
 
-        let idProducts = [];
-      
-        for (let i = 0; i < produitLocalStorage.length; i++) {
-            idProducts.push(produitLocalStorage[i].idProduit);
-        }
-        console.log(idProducts);
-
-        const order = {
+        const payload = {
             contact: {
                 firstName: inputName.value,
                 lastName: inputLastName.value,
@@ -133,12 +129,12 @@ function postForm() {
                 city: inputCity.value,
                 email: inputMail.value,
             },
-            products: idProducts,
+            products: productsIds,
         }
 
         const options = {
             method: 'POST',
-            body: JSON.stringify(order),
+            body: JSON.stringify(payload),
             headers: {
                 'Accept': 'application/json',
                 "Content-Type": "application/json"
@@ -148,11 +144,8 @@ function postForm() {
         fetch("http://localhost:3000/api/products/order", options)
             .then((response) => response.json())
             .then((data) => {
-                console.log(data);
                 localStorage.clear();
-                localStorage.setItem("orderId", data.orderId);
-
-                document.location.href = "confirmation.html";
+                document.location.href = "confirmation.html?order=" + data.orderId;
             })
             .catch((err) => {
                 alert("Problème avec fetch : " + err.message);
