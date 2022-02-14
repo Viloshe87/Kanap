@@ -1,26 +1,81 @@
-console.log('123');
-if (isCartempty()) {
-    showemptyCart();
-} else {
 
-    //récupérations des données de l' API //
+//récupérations des données de l' API //
+fetch("http://localhost:3000/api/products/")
+    .then((response) => response.json())
+    .then((allProducts) => {
+        let products = buildCompletProductsList(allProducts);
+        let total = countTotal(products);
+        let quantity = countQuantity(products);
+        displayTotal(total)
+        displayQuantity(quantity);
+        displayProducts(products);
+        listenForDeletion();
+        listenForQtyChange();
+    })
 
-    fetch("http://localhost:3000/api/products/")
-        .then((response) => response.json())
-        .then((allProducts) => {
-            let products = buildCompletProductsList(allProducts);
-            let total = countTotal(products);
-            let quantity = countQuantity(products);
-            displayTotal(total)
-            displayQuantity(quantity);
-            displayProducts(products);
-            listenForDeletion();
-            listenForQtyChange();
-        })
+// Récupération des produits dans le locaStorage //
+function buildCompletProductsList(allProducts) {
+    let products = [];
+    let productsInCart = JSON.parse(localStorage.getItem("products"));
+    productsInCart.forEach(cartItem => {
+        let item = allProducts.find(item => item._id == cartItem.id)
+        let product = { ...item }
+        product.qty = cartItem.qty
+        product.color = cartItem.color
+        console.log(product)
+        products.push(product);
+    })
+    return products;
+}
+
+//Récupération des infos de la page produit//
+function countTotal(products) {
+    let total = 0;
+    products.forEach(product => {
+        total = total + (Number(product.price) * Number(product.qty))
+    })
+    return total;
+}
+
+// Récupération de la quantité //
+function countQuantity(products) {
+    let quantity = 0;
+    products.forEach(product => {
+        quantity = quantity + Number(product.qty);
+    })
+    return quantity;
+}
+
+//Affichage du produit dans le panier //
+function displayProducts(products) {
+    let html = '';
+    products.forEach(product => {
+        html += render(product);
+    })
+    document.getElementById('cart__items').innerHTML = html
+}
+
+//Affichage du prix total du produit
+function displayTotal(total) {
+    document.getElementById('totalPrice').innerHTML = formatter.format(total)
+}
+//Affichage de la quantité du produit
+function displayQuantity(quantity) {
+    document.getElementById('totalQuantity').innerHTML = quantity
+}
+
+//Si Panier vide //
+function isCartempty() {
+    if (!localStorage.getItem('products')) {
+        return true;
+    }
+    if (JSON.parse(localStorage.getItem('products')).length == 0) {
+        return true;
+    };
+    return false;
 }
 
 //Vérification su panier supérieur a zéro //
-
 function listenForQtyChange() {
     document.querySelectorAll('.itemQuantity').forEach(button => {
 
@@ -46,7 +101,6 @@ function listenForQtyChange() {
 }
 
 //Supression du produit dans le panier//
-
 function listenForDeletion() {
     document.querySelectorAll('.deleteItem').forEach(button => {
 
@@ -64,42 +118,7 @@ function listenForDeletion() {
         })
     })
 }
-//Affichage du produit dans le panier //
-
-function displayProducts(products) {
-    let html = '';
-
-    products.forEach(product => {
-        html += render(product);
-    })
-    document.getElementById('cart__items').innerHTML = html
-}
-
-//Récupération des infos de la page produit//
-
-//Récupération du prix total // 
-
-function countTotal(products) {
-
-    let total = 0;
-    products.forEach(product => {
-        total = total + (Number(product.price) * Number(product.qty))
-    })
-    return total;
-}
-
-// Récupération de la quantité //
-
-function countQuantity(products) {
-    let quantity = 0;
-
-    products.forEach(product => {
-        quantity = quantity + Number(product.qty);
-    })
-    return quantity;
-}
 // Récupération des identifiants du DOM //
-
 function render(product) {
     return `<article class="cart__item" data-id="${product._id}">
     <div class="cart__item__img">
@@ -123,46 +142,8 @@ function render(product) {
   </article>`;
 }
 
-// Récupération des produits dans le locaStorage //
-
-function buildCompletProductsList(allProducts) {
-
-    let products = [];
-    let productsInCart = JSON.parse(localStorage.getItem("products"));
-
-    productsInCart.forEach(cartItem => {
-        let item = allProducts.find(item => item._id == cartItem.id)
-        let product = { ...item }
-        product.qty = cartItem.qty
-        product.color = cartItem.color
-        console.log(product)
-        products.push(product);
-    })
-    return products;
-}
-//Si carte vide //
-function isCartempty() {
-    if (!localStorage.getItem('products')) {
-        return true;
-    }
-    if (JSON.parse(localStorage.getItem('products')).length == 0) {
-        return true;
-    };
-    return false;
-}
-
+//Affichage Panier vide
 function showemptyCart() {
     document.querySelector('h1').innerText = 'Panier vide'
     document.querySelector('.cart').getElementsByClassName.display = 'none'
-}
-//Affichage du prix total du produit
-function displayTotal(total) {
-
-    document.getElementById('totalPrice').innerHTML = formatter.format(total)
-}
-//Affichage de la quantité du produit
-
-function displayQuantity(quantity) {
-
-    document.getElementById('totalQuantity').innerHTML = quantity
 }

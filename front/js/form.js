@@ -13,39 +13,41 @@ form.firstName.addEventListener('input', function () {
     validFirstName(this);
 });
 
-// Ecoute de la modification du prénom
+// Ecoute de la modification du nom
 form.lastName.addEventListener('input', function () {
     validLastName(this);
 });
 
-// Ecoute de la modification du prénom
+// Ecoute de la modification de l'adresse
 form.address.addEventListener('input', function () {
     validAddress(this);
 });
 
-// Ecoute de la modification du prénom
+// Ecoute de la modification de la ville
 form.city.addEventListener('input', function () {
     validCity(this);
 });
 
-// Ecoute de la modification du prénom
+// Ecoute de la modification de l'email
 form.email.addEventListener('input', function () {
     validEmail(this);
 });
 
 //validation du prénom
-const validFirstName = function (inputFirstName) {
+function validFirstName(inputFirstName) {
     let el = inputFirstName.nextElementSibling;
 
     if (charRegExp.test(inputFirstName.value)) {
         hideError(el);
+        return true;
     } else {
-        el.innerHTML = 'Veuillez renseigner ce champ.';
+        showError(el, 'Veuillez renseigner ce champ');
+        return false
     }
 };
 
 //validation du nom
-const validLastName = function (inputLastName) {
+function validLastName(inputLastName) {
     let el = inputLastName.nextElementSibling;
 
 
@@ -58,7 +60,7 @@ const validLastName = function (inputLastName) {
 };
 
 //validation de l'adresse
-const validAddress = function (inputAddress) {
+function validAddress(inputAddress) {
     let el = inputAddress.nextElementSibling;
 
     if (addressRegExp.test(inputAddress.value)) {
@@ -70,7 +72,7 @@ const validAddress = function (inputAddress) {
 };
 
 //validation de la ville
-const validCity = function (inputCity) {
+function validCity(inputCity) {
     let el = inputCity.nextElementSibling;
 
     if (charRegExp.test(inputCity.value)) {
@@ -81,7 +83,7 @@ const validCity = function (inputCity) {
 };
 
 //validation de l'email
-const validEmail = function (inputEmail) {
+function validEmail(inputEmail) {
     let el = inputEmail.nextElementSibling;
 
     if (emailRegExp.test(inputEmail.value)) {
@@ -91,13 +93,12 @@ const validEmail = function (inputEmail) {
     showError(el, 'Veuillez renseigner ce champ');
     return false;
 };
- 
+
 function showError(element, message) {
     element.innerHTML = message;
 }
 
 //Masque l'erreur du formulaire pour afficher texte utilisateur //
-
 function hideError(element) {
     element.innerHTML = '';
 }
@@ -109,25 +110,33 @@ function postForm() {
 
     //Ecouter le panier
     btn_commander.addEventListener("click", (event) => {
-        //Arret d'execution du formulaire//
         event.preventDefault();
-        //Récupération des coordonnées du formulaire client
-        let inputName = document.getElementById('firstName');
+
+        let inputFirstName = document.getElementById('firstName');
         let inputLastName = document.getElementById('lastName');
-        let inputAdress = document.getElementById('address');
+        let inputAddress = document.getElementById('address');
         let inputCity = document.getElementById('city');
-        let inputMail = document.getElementById('email');
+        let inputEmail = document.getElementById('email');
+
+        if (!validFirstName(inputFirstName)
+            || !validLastName(inputLastName)
+            || !validAddress(inputAddress)
+            || !validCity(inputCity)
+            || !validEmail(inputEmail)) {
+            alert('Merci de bien remplir le formulaire')
+            return;
+        }
 
         //Construction d'un array depuis le local storage
         let productsIds = JSON.parse(localStorage.getItem("products")).map(product => product.id);
 
         const payload = {
             contact: {
-                firstName: inputName.value,
+                firstName: inputFirstName.value,
                 lastName: inputLastName.value,
-                address: inputAdress.value,
+                address: inputAddress.value,
                 city: inputCity.value,
-                email: inputMail.value,
+                email: inputEmail.value,
             },
             products: productsIds,
         }

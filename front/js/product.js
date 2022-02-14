@@ -1,6 +1,5 @@
 let id = getId();
 
-
 // Récupération des articles de l'API//
 fetch("http://localhost:3000/api/products/" + id)
     .then((res) => res.json())
@@ -61,7 +60,6 @@ function listenForCartAdd() {
             alert("la quantité doit etre supérieur a 1.");
             return;
         }
-
         if (color.length == 0) {
             alert("Vous devez selectionner une couleur");
             return;
